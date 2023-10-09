@@ -41,10 +41,24 @@ class HybridSplitQKVContainer(HybridEngineContainer):
                 (self.module.attention.attn_vw, self.vw),
                 (self.module.attention.attn_vb, self.vb),
             ]
-            for dst, src in params:
-                dst = mp_replace.copy(
-                    dst[:self.qw.shape[0] // mp_replace.mp_size], src, int8=reversed_dim,
-                    allocate_tensor=reversed_dim) if src is not None else None
+            self.module.attention.attn_qw = mp_replace.copy(
+                self.module.attention.attn_qw[:self.qw.shape[0] // mp_replace.mp_size], self.qw, int8=reversed_dim,
+                allocate_tensor=reversed_dim) if self.qw is not None else None
+            self.module.attention.attn_qb = mp_replace.copy(
+                self.module.attention.attn_qb[:self.qb.shape[0] // mp_replace.mp_size], self.qb, int8=reversed_dim,
+                allocate_tensor=reversed_dim) if self.qb is not None else None
+            self.module.attention.attn_kw = mp_replace.copy(
+                self.module.attention.attn_kw[:self.kw.shape[0] // mp_replace.mp_size], self.kw, int8=reversed_dim,
+                allocate_tensor=reversed_dim) if self.kw is not None else None
+            self.module.attention.attn_kb = mp_replace.copy(
+                self.module.attention.attn_kb[:self.kb.shape[0] // mp_replace.mp_size], self.kb, int8=reversed_dim,
+                allocate_tensor=reversed_dim) if self.kb is not None else None
+            self.module.attention.attn_vw = mp_replace.copy(
+                self.module.attention.attn_vw[:self.vw.shape[0] // mp_replace.mp_size], self.vw, int8=reversed_dim,
+                allocate_tensor=reversed_dim) if self.vw is not None else None
+            self.module.attention.attn_vb = mp_replace.copy(
+                self.module.attention.attn_vb[:self.vb.shape[0] // mp_replace.mp_size], self.vb, int8=reversed_dim,
+                allocate_tensor=reversed_dim) if self.vb is not None else None
         else:
             super().attention_qkv_mp(mp_replace)
 

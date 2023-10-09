@@ -202,8 +202,8 @@ class DeepSpeedHybridEngine(DeepSpeedEngine):
                             if len(self.all_lora_params) > 0:
                                 self._fuse_lora_layer(layer_id)
 
-                            if self.mpu is not None:
-                                self._inference_containers[layer_id].apply_tensor_parallelism(self.mp_replace,
+                            #if self.mpu is not None:
+                            self._inference_containers[layer_id].apply_tensor_parallelism(self.mp_replace,
                                                                                               reversed_dim=True)
 
                 # TODO(cmikeh2) Evaluate if this can be deferred when release_inference_cache
